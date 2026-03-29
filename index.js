@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { Client, GatewayIntentBits, SlashCommandBuilder, ChatInputCommandInteraction } = require('discord.js');
+const { Client, GatewayIntentBits, SlashCommandBuilder } = require('discord.js');
 
 const client = new Client({
     intents: [
@@ -24,19 +24,21 @@ const sayCommand = new SlashCommandBuilder()
     .setDescription('Send a message as the bot.')
     .addChannelOption(option => 
         option.setName('channel')
-            .setDescription('Target channel (default: current)')
+            .setDescription('Target channel')
             .setRequired(false)
     )
     .addIntegerOption(option => 
         option.setName('delay')
-            .setDescription('Delay in seconds (default: 0)')
+            .setDescription('Delay seconds')
             .setMinValue(0)
+            .setMaxValue(3600)
             .setRequired(false)
     )
     .addStringOption(option => 
         option.setName('text')
-            .setDescription('Message to send')
+            .setDescription('Message')
             .setRequired(true)
+            .setMaxLength(2000)
     );
 
 client.once('ready', async () => {
@@ -44,8 +46,12 @@ client.once('ready', async () => {
     
     const guild = client.guilds.cache.get(GUILD_ID);
     if (guild) {
-        await guild.commands.create(sayCommand);
-        console.log('!say command registered');
+        try {
+            await guild.commands.create(sayCommand);
+            console.log('/say registered');
+        } catch (err) {
+            console.log('Slash register error:', err.message);
+        }
     }
     
     setInterval(updateMemberCount, 10 * 60 * 1000);
@@ -56,31 +62,35 @@ client.once('ready', async () => {
 });
 
 client.on('interactionCreate', async (interaction) => {
-    if (!interaction.isChatInputCommand()) return;
+    if (!interaction.isChatInputCommand() || interaction.commandName !== 'say') return;
 
-    if (interaction.commandName === 'say') {
-        if (!interaction.member.roles.cache.has(DIRECTOR_ROLE_ID)) {
-            return interaction.reply({ content: '❌ No permission.', ephemeral: true });
-        }
-
-        const channel = interaction.options.getChannel('channel') || interaction.channel;
-        const delay = interaction.options.getInteger('delay') || 0;
-        const text = interaction.options.getString('text');
-
-        if (delay > 3600) { // Max 1h
-            return interaction.reply({ content: '❌ Delay max 1 hour.', ephemeral: true });
-        }
-
-        await interaction.reply({ content: '✅ Sent.', ephemeral: true });
-
-        if (delay === 0) {
-            await channel.send(text);
-        } else {
-            setTimeout(async () => {
-                await channel.send(text);
-            }, delay * 1000);
-        }
+    if (!interaction.member.roles.cache.has(DIRECTOR_ROLE_ID)) {
+        return interaction.reply({ content: 'You must be in the **Director Team** in order to use the command (/say).', ephemeral: true });
     }
+
+    const channel = interaction.options.getChannel('channel') || interaction.channel;
+    const delay = interaction.options.getInteger('delay') || 0;
+    const text = interaction.options.getString('text');
+
+    await interaction.reply({ content: `✅ ${delay ? `Sends in ${delay}s.` : 'Sent.'}`, ephemeral: true });
+
+    if (delay === 0) {
+        return channel.send(text);
+    }
+    setTimeout(() => channel.send(text), delay * 1000);
+});
+
+client.on('messageCreate', (message) => {
+    if (message.author.bot || !message.content.startsWith('!say ')) return;
+    if (!message.member.roles.cache.has(DIRECTOR_ROLE_ID)) {
+        return message.reply('You must be in the **Director Team** in order to use the command (!say).');
+    }
+
+    const text = message.content.slice(5).trim();
+    if (!text) return message.reply('❌ Provide a message.');
+
+    message.channel.send(text);
+    // Optional: message.delete() ?
 });
 
 async function updateMemberCount() {
@@ -125,7 +135,6 @@ async function sendVerifyReminder() {
     const unverifiedRole = guild.roles.cache.get(UNVERIFIED_ROLE_ID);
     if (!unverifiedRole) return;
 
-    // Delete prior bot messages
     try {
         const messages = await verifyChannel.messages.fetch({ limit: 10 });
         const botMessages = messages.filter(msg => msg.author.id === client.user.id);

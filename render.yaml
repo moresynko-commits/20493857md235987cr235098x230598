@@ -1,9 +1,9 @@
 services:
-  - type: worker
+  - type: web
     name: mdcrx-services
     env: node
     plan: free
-    buildCommand: npm install
+    buildCommand: npm ci
     startCommand: npm start
     envVars:
       - key: BOT_TOKEN

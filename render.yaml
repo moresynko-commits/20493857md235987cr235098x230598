@@ -1,5 +1,5 @@
 services:
-  - type: web
+  - type: worker
     name: mdcrx-services
     env: node
     plan: free
@@ -7,6 +7,6 @@ services:
     startCommand: npm start
     envVars:
       - key: BOT_TOKEN
-        sync: false  # Set manually in Render dashboard
+        sync: false
     autoDeploy: true
 

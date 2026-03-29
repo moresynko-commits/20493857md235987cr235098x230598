@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { Client, GatewayIntentBits, SlashCommandBuilder } = require('discord.js');
+const { Client, GatewayIntentBits } = require('discord.js');
 
 const client = new Client({
     intents: [
@@ -19,65 +19,14 @@ const UNVERIFIED_ROLE_ID = '1486920575187288224';
 
 let lastVoiceName = null;
 
-const sayCommand = new SlashCommandBuilder()
-    .setName('say')
-    .setDescription('Send a message as the bot.')
-    .addChannelOption(option => 
-        option.setName('channel')
-            .setDescription('Target channel')
-            .setRequired(false)
-    )
-    .addIntegerOption(option => 
-        option.setName('delay')
-            .setDescription('Delay seconds')
-            .setRequired(false)
-            .setMinValue(0)
-            .setMaxValue(3600)
-    )
-    .addStringOption(option => 
-        option.setName('text')
-            .setDescription('Message')
-            .setRequired(true)
-            .setMaxLength(2000)
-    );
-
 client.once('clientReady', async () => {
     console.log(`${client.user.tag} logged in!`);
-    
-    const guild = client.guilds.cache.get(GUILD_ID);
-    if (guild) {
-        try {
-            await guild.commands.create(sayCommand);
-            console.log('/say registered');
-        } catch (err) {
-            console.log('Slash register error:', err.message);
-        }
-    }
     
     setInterval(updateMemberCount, 10 * 60 * 1000);
     setInterval(sendVerifyReminder, 24 * 60 * 60 * 1000);
     
     await sendVerifyReminder();
     await updateMemberCount();
-});
-
-client.on('interactionCreate', async (interaction) => {
-    if (!interaction.isChatInputCommand() || interaction.commandName !== 'say') return;
-
-    if (!interaction.member.roles.cache.has(DIRECTOR_ROLE_ID)) {
-        return interaction.reply({ content: 'You must be in the **Director Team** in order to use the command (/say).', ephemeral: true });
-    }
-
-    const channel = interaction.options.getChannel('channel') || interaction.channel;
-    const delay = interaction.options.getInteger('delay') || 0;
-    const text = interaction.options.getString('text');
-
-    await interaction.reply({ content: `✅ ${delay ? `Sends in ${delay}s.` : 'Sent.'}`, ephemeral: true });
-
-    if (delay === 0) {
-        return channel.send(text);
-    }
-    setTimeout(() => channel.send(text).catch(console.error), delay * 1000);
 });
 
 client.on('messageCreate', (message) => {
@@ -87,9 +36,14 @@ client.on('messageCreate', (message) => {
     }
 
     const text = message.content.slice(5).trim();
-    if (!text) return message.reply('❌ Provide a message.');
+    if (!text) {
+        return message.reply('❌ No message provided.');
+    }
 
-    message.channel.send(text).catch(console.error);
+    message.channel.send(text).catch(err => {
+        console.error('!say send failed:', err);
+        message.reply('Failed to send.');
+    });
 });
 
 async function updateMemberCount() {

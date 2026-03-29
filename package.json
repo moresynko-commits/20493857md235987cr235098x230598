@@ -1,0 +1,17 @@
+{
+  "name": "mdcrx-services",
+  "version": "1.0.0",
+  "description": "MDCRX Services Discord bot for Modern Colorado Roleplay",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.15.3",
+    "dotenv": "^16.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
+

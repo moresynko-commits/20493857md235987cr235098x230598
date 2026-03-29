@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
+const { Client, GatewayIntentBits } = require('discord.js');
 
 const client = new Client({
     intents: [
@@ -26,19 +26,24 @@ client.once('ready', async () => {
     setInterval(updateMemberCount, 10 * 60 * 1000); // 10 min
     setInterval(sendVerifyReminder, 24 * 60 * 60 * 1000); // 24h
     
-    // Initial verify
+    // Initial
     await sendVerifyReminder();
+    await updateMemberCount();
 });
 
 async function updateMemberCount() {
     const guild = client.guilds.cache.get(GUILD_ID);
     if (!guild) return;
 
+    await guild.members.fetch();
+
     const voiceChannel = guild.channels.cache.get(VOICE_CHANNEL_ID);
     if (!voiceChannel || !voiceChannel.isVoiceBased()) return;
 
     const memberCount = guild.members.cache.filter(m => !m.user.bot).size;
     const newName = `Server Members: ${memberCount}`;
+
+    console.log(`Member count: ${memberCount}, Current name: ${voiceChannel.name}`);
 
     if (voiceChannel.name !== newName) {
         try {
@@ -47,17 +52,13 @@ async function updateMemberCount() {
             const logisticsChannel = guild.channels.cache.get(LOGISTICS_CHANNEL_ID);
             if (logisticsChannel) {
                 const oldNum = lastVoiceName ? lastVoiceName.split(': ')[1] || 'Unknown' : 'Unknown';
-                const nextUpdate = new Date(Date.now() + 10 * 60 * 1000).toISOString();
-                const embed = new EmbedBuilder()
-                    .setTitle('Server Members Counter Updated')
-                    .setDescription(`The **Server-Members** voice channel located in the __Community Analytics__ Category has been updated from ${oldNum} to ${memberCount}. Another update is scheduled to occur at <t:${Math.floor(Date.now() / 1000 + 600)}:F>.`)
-                    .setColor(0x3498db)
-                    .setTimestamp();
-                await logisticsChannel.send({ embeds: [embed] });
+                const nextUpdateUnix = Math.floor((Date.now() + 10 * 60 * 1000) / 1000);
+                const logMsg = `<t:${Math.floor(Date.now() / 1000)}:F>: The **Server-Members** voice channel located in the __Community Analytics__ Category has been updated from **${oldNum}** to **${memberCount}**. Another update is scheduled to occur at <t:${nextUpdateUnix}:F>.`;
+                await logisticsChannel.send(logMsg);
             }
             lastVoiceName = newName;
         } catch (error) {
-            console.error('Update voice channel error:', error);
+            console.error('Voice update error:', error);
         }
     }
 }
@@ -72,16 +73,16 @@ async function sendVerifyReminder() {
     const unverifiedRole = guild.roles.cache.get(UNVERIFIED_ROLE_ID);
     if (!unverifiedRole) return;
 
-    // Delete previous
+    // Delete previous bot msg
     if (lastVerifyMsgId) {
         try {
             await verifyChannel.messages.delete(lastVerifyMsgId);
         } catch (error) {
-            // Ignore if not found/forbidden
+            console.log('Delete old verify failed:', error.message);
         }
     }
 
-    const msgContent = `${unverifiedRole} : Ensure that you click the **Verify with Bloxlink** green button listed above to access our Server Member Channels and Server Member Role, permitting you to partake in giveaways, and more server-activities!`;
+    const msgContent = `${unverifiedRole}: Ensure that you click the **Verify with Bloxlink** green button listed above to access our Server Member Channels and Server Member Role, permitting you to partake in giveaways, and more server-activities!`;
     
     try {
         const msg = await verifyChannel.send(msgContent);
@@ -89,16 +90,12 @@ async function sendVerifyReminder() {
 
         const logisticsChannel = guild.channels.cache.get(LOGISTICS_CHANNEL_ID);
         if (logisticsChannel) {
-            const nextTime = Math.floor((Date.now() + 24 * 60 * 60 * 1000) / 1000);
-            const embed = new EmbedBuilder()
-                .setTitle('Verification Reminder Sent')
-                .setDescription(`A new verification reminder message has been sent in <#${VERIFY_CHANNEL_ID}>. All **Unverified Members** have been notified to **Verify with Bloxlink**.\n> A new message has been scheduled to send at <t:${nextTime}:F>.`)
-                .setColor(0x2ecc71)
-                .setTimestamp();
-            await logisticsChannel.send({ embeds: [embed] });
+            const nextTimeUnix = Math.floor((Date.now() + 24 * 60 * 60 * 1000) / 1000);
+            const logMsg = `<t:${Math.floor(Date.now() / 1000)}:F>: A new verification reminder message has been sent in <#${VERIFY_CHANNEL_ID}>. All **Unverified Members** have been notified to **Verify with Bloxlink**. \n> A new message has been scheduled to send at <t:${nextTimeUnix}:F>.`;
+            await logisticsChannel.send(logMsg);
         }
     } catch (error) {
-        console.error('Send verify error:', error);
+        console.error('Verify send error:', error);
     }
 }
 

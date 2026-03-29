@@ -30,9 +30,9 @@ const sayCommand = new SlashCommandBuilder()
     .addIntegerOption(option => 
         option.setName('delay')
             .setDescription('Delay seconds')
+            .setRequired(false)
             .setMinValue(0)
             .setMaxValue(3600)
-            .setRequired(false)
     )
     .addStringOption(option => 
         option.setName('text')
@@ -41,7 +41,7 @@ const sayCommand = new SlashCommandBuilder()
             .setMaxLength(2000)
     );
 
-client.once('ready', async () => {
+client.once('clientReady', async () => {
     console.log(`${client.user.tag} logged in!`);
     
     const guild = client.guilds.cache.get(GUILD_ID);
@@ -77,7 +77,7 @@ client.on('interactionCreate', async (interaction) => {
     if (delay === 0) {
         return channel.send(text);
     }
-    setTimeout(() => channel.send(text), delay * 1000);
+    setTimeout(() => channel.send(text).catch(console.error), delay * 1000);
 });
 
 client.on('messageCreate', (message) => {
@@ -89,8 +89,7 @@ client.on('messageCreate', (message) => {
     const text = message.content.slice(5).trim();
     if (!text) return message.reply('❌ Provide a message.');
 
-    message.channel.send(text);
-    // Optional: message.delete() ?
+    message.channel.send(text).catch(console.error);
 });
 
 async function updateMemberCount() {

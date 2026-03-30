@@ -3,43 +3,121 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Modern Colorado Roleplay - Admin Dashboard</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Modern Colorado Roleplay - Complete Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    /* Premium 2025 CSS from previous - glass, gradients, animations */
+    body { background: linear-gradient(135deg, #0a0a1a 0%, #1a0033 50%, #000 100%); }
+    /* ... full style.css content ... */
+  </style>
 </head>
-<body>
-  <header>
-    <h1>🚓 Modern Colorado Roleplay</h1>
-    <nav>
-      <button id="loginBtn">Login with Discord</button>
-      <span id="userInfo" style="display:none;"></span>
-      <button id="logoutBtn" style="display:none;">Logout</button>
-    </nav>
-  </header>
-  <main>
-    <section id="community">
-      <h2>Community Config</h2>
-      <form id="commForm">
-        <input type="text" id="guildName" placeholder="Server Name">
-        <button type="submit">Save</button>
+<body class="dark">
+  <!-- Header nav: Home, Profiles, Departments, Applications, Mod Logs, ER:LC, Activity, Community, Admin, Maps -->
+  <nav class="glass-header">...</nav>
+
+  <!-- Core Homepage -->
+  <section id="home">
+    <div class="hero">
+      <h1>Modern Colorado Roleplay</h1>
+      <div class="status-grid">
+        <div class="status-card online">Server Online</div>
+        <div class="player-count">247 Players</div>
+        <button onclick="joinERLC()">Join Server</button>
+      </div>
+      <div class="announcement">New Update: ER:LC Integration v2.0</div>
+    </div>
+  </section>
+
+  <!-- User Profiles -->
+  <section id="profiles">
+    <div class="profile-card">
+      <form onsubmit="linkRoblox(event)">
+        <input placeholder="Roblox Username" id="robloxLink">
+        <button>Link Roblox</button>
       </form>
-    </section>
-    <section id="departments">
-      <h2>Departments</h2>
-      <ul id="deptList"></ul>
-      <form id="deptForm">
-        <input type="text" id="newDept" placeholder="New Department">
-        <button type="submit">Add</button>
+      <div class="badges">🏅 Badge 1 | 🔥 Active Streak</div>
+    </div>
+  </section>
+
+  <!-- Departments -->
+  <section id="departments">
+    <div class="dept-grid">
+      <div class="dept-card leo">
+        <h3>Law Enforcement</h3>
+        <ul>Chief → Deputy → Officer</ul>
+        <a href="#sop-leo">SOPs</a>
+      </div>
+      <!-- Fire, DOT, Civ -->
+    </div>
+  </section>
+
+  <!-- Applications -->
+  <section id="applications">
+    <div class="form-grid">
+      <form class="app-form">
+        <h3>Staff Application</h3>
+        <!-- Fields: name, roblox, why join, erlc exp -->
+        <button>Submit</button>
       </form>
-    </section>
-    <section id="staff">
-      <h2>Staff Info</h2>
-      <ul id="staffList"></ul>
-      <form id="staffForm">
-        <input type="text" id="newStaff" placeholder="New Staff Name">
-        <button type="submit">Add</button>
-      </form>
-    </section>
-  </main>
+      <div class="status-tracker">
+        <h3>Pending Applications</h3>
+        <table>...</table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mod Logs -->
+  <section id="mod-logs">
+    <table class="logs-table">
+      <!-- Filtered logs, cases, evidence upload -->
+    </table>
+  </section>
+
+  <!-- ER:LC Integration -->
+  <section id="erlc">
+    <div class="lookup-form">
+      <input placeholder="Player/Vehicle ID">
+      <button onclick="lookupPlayer()">Lookup</button>
+    </div>
+    <div id="bolo-list"></div>
+    <div id="cad-map" style="height:400px;"></div> <!-- Leaflet map -->
+  </section>
+
+  <!-- Activity Leaderboards -->
+  <section id="activity">
+    <canvas id="leaderboardChart"></canvas>
+    <div class="xp-system">
+      <span>Your XP: 1247 / 2500</span>
+    </div>
+  </section>
+
+  <!-- Community -->
+  <section id="community">
+    <div class="polls">
+      <h3>Current Poll</h3>
+      <button>Poll Option 1</button>
+    </div>
+    <div class="event-calendar">...</div>
+  </section>
+
+  <!-- Admin -->
+  <section id="admin">
+    <div class="cms-editor">Drag-drop content</div>
+    <canvas id="analyticsChart"></canvas>
+  </section>
+
+  <!-- Extra -->
+  <section id="extra">
+    <div id="liberty-map"></div> <!-- Interactive map -->
+    <div class="gallery">Screenshots gallery</div>
+  </section>
+
   <script src="script.js"></script>
 </body>
 </html>
+

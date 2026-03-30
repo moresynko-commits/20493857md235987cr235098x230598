@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modern Colorado Roleplay - Admin Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>🚓 Modern Colorado Roleplay</h1>
+    <nav>
+      <button id="loginBtn">Login with Discord</button>
+      <span id="userInfo" style="display:none;"></span>
+      <button id="logoutBtn" style="display:none;">Logout</button>
+    </nav>
+  </header>
+  <main>
+    <section id="community">
+      <h2>Community Config</h2>
+      <form id="commForm">
+        <input type="text" id="guildName" placeholder="Server Name">
+        <button type="submit">Save</button>
+      </form>
+    </section>
+    <section id="departments">
+      <h2>Departments</h2>
+      <ul id="deptList"></ul>
+      <form id="deptForm">
+        <input type="text" id="newDept" placeholder="New Department">
+        <button type="submit">Add</button>
+      </form>
+    </section>
+    <section id="staff">
+      <h2>Staff Info</h2>
+      <ul id="staffList"></ul>
+      <form id="staffForm">
+        <input type="text" id="newStaff" placeholder="New Staff Name">
+        <button type="submit">Add</button>
+      </form>
+    </section>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>

@@ -3,9 +3,13 @@ services:
     name: mdcrx-services
     env: node
     plan: free
-    buildCommand: npm ci
+buildCommand: npm install
     startCommand: npm start
     envVars:
       - key: BOT_TOKEN
+        sync: false
+      - key: MONGODB_URI
+        sync: false
+      - key: API_KEY
         sync: false
     autoDeploy: true

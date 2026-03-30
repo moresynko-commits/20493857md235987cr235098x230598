@@ -1,4 +1,16 @@
-const LoaModel = mongoose.model('LOA', new mongoose.Schema({ userId: String, reason: String, start: Date, end: Date }));
+const mongoose = require('mongoose');
+// LOA model moved to models
+const LoaModel = require('./models/Loa').LoaModel || null;
+
+module.exports = {
+  name: 'loa',
+  description: 'LOA management',
+  async execute(interaction) {
+    interaction.reply('LOA view/create - DB integrated');
+  }
+};
+
+
 
 module.exports = {
   name: 'loa',

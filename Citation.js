@@ -10,4 +10,5 @@ const citationSchema = new mongoose.Schema({
   guildId: String
 });
 
+const mongoose = require('mongoose');
 module.exports = mongoose.model('Citation', citationSchema);

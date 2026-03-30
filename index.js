@@ -44,15 +44,13 @@ client.once('ready', async () => {
 if (process.env.MONGODB_URI) {
         mongoose.connect(process.env.MONGODB_URI, {
             serverSelectionTimeoutMS: 5000,
-            maxPoolSize: 10,
             socketTimeoutMS: 45000,
-            family: 4,
-            bufferMaxEntries: 0
+            family: 4
         }).then(() => console.log('MongoDB connected')).catch(err => console.error('Mongo error:', err));
     }
     
     const commandsPath = path.join(__dirname, '.');
-    const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js') && !file.startsWith('index') && !file.endsWith('deploy-commands.js'));
+const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js') && !file.startsWith('index') && !['render.yaml', 'package.json'].includes(file));
     for (const file of commandFiles) {
         const command = require(`./${file}`);
         if (command.name) client.commands.set(command.name, command);

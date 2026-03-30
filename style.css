@@ -1,0 +1,12 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: #fff; min-height: 100vh; }
+header { background: rgba(0,0,0,0.3); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+h1 { color: #ffd700; }
+nav button { background: #ff4757; color: white; border: none; padding: 0.5rem 1rem; border-radius: 25px; cursor: pointer; }
+main { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
+section { background: rgba(255,255,255,0.1); margin: 1rem 0; padding: 2rem; border-radius: 15px; backdrop-filter: blur(10px); }
+h2 { margin-bottom: 1rem; color: #ffd700; }
+form { display: flex; gap: 1rem; margin-bottom: 1rem; }
+input { padding: 0.5rem; border-radius: 5px; border: none; flex: 1; }
+ul { list-style: none; }
+li { background: rgba(255,255,255,0.2); padding: 0.5rem; margin: 0.5rem 0; border-radius: 5px; }

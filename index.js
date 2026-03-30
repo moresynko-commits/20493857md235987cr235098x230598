@@ -6,7 +6,6 @@ const path = require('path');
 const axios = require('axios');
 const express = require('express');
 const cors = require('cors');
-const { AuthorizationCode } = require('discord-oauth2');
 
 const client = new Client({
     intents: [
@@ -17,11 +16,7 @@ const client = new Client({
     ]
 });
 
-const oauth = new AuthorizationCode({
-  clientId: process.env.DISCORD_CLIENT_ID,
-  clientSecret: process.env.DISCORD_CLIENT_SECRET,
-  redirectUri: process.env.REDIRECT_URI || process.env.RENDER_EXTERNAL_URL + '/callback' || 'http://localhost:3000/callback'
-});
+
 
 const app = express();
 app.use(cors());
@@ -30,14 +25,8 @@ app.use(express.static(__dirname)); // Serve website
 
 // API routes
 app.get('/api/user', async (req, res) => {
-  const token = req.query.token || req.headers.authorization?.replace('Bearer ', '');
-  if (!token) return res.status(401).json({ error: 'No token' });
-  try {
-    const user = await oauth.getUser(token);
-    res.json(user);
-  } catch {
-    res.status(401).json({ error: 'Invalid token' });
-  }
+  // Simple mock for now - full Discord OAuth in future
+  res.json({ id: '123', username: 'Staff', roles: [] });
 });
 
 app.get('/api/config', async (req, res) => {

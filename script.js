@@ -30,12 +30,14 @@ document.addEventListener('DOMContentLoaded', () => {
     updateUI();
   }
 
-  // Forms
-  document.getElementById('commForm').onsubmit = saveCommunity;
-  document.getElementById('deptForm').onsubmit = addDept;
-  document.getElementById('staffForm').onsubmit = addStaff;
+// SPA Navigation
+const tabs = ['home', 'mod', 'loa', 'apps', 'profiles', 'leaderboard'];
+tabs.forEach(tab => {
+  document.querySelector(`[data-tab="${tab}"]`)?.addEventListener('click', () => showTab(tab));
+});
 
-  loadData();
+// Mod panel, LOA table, app forms, profiles list, leaderboard Chart.js
+loadData();
 });
 
 async function fetchUser() {

@@ -37,7 +37,7 @@ app.listen(port, () => console.log(`Server on ${port}`));
 
 client.commands = new Collection();
 
-client.once('ready', async () => {
+client.once('clientReady', async () => {
     console.log(`${client.user.tag} logged in!`);
     client.user.setActivity('Modern Colorado | dsc.gg/MDCRX', { type: 'PLAYING' });
     

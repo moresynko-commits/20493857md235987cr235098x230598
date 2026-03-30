@@ -3,121 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Modern Colorado Roleplay - Complete Portal</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <title>MCRPX - Modern Colorado Roleplay</title>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script type="text/babel" src="App.jsx"></script>
   <style>
-    /* Premium 2025 CSS from previous - glass, gradients, animations */
-    body { background: linear-gradient(135deg, #0a0a1a 0%, #1a0033 50%, #000 100%); }
-    /* ... full style.css content ... */
+    body { font-family: 'Montserrat', sans-serif; background: linear-gradient(135deg, #000428 0%, #004e92 100%); }
+    h1, h2, h3 { font-family: 'Anton', sans-serif; }
+    .glass { background: rgba(255,255,255,0.08); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }
+    .nav-tab { @apply px-6 py-3 rounded-2xl font-medium mx-1 transition-all duration-300 hover:bg-white/10 active:bg-white/20; }
+    .nav-tab.active { @apply bg-gradient-to-r from-blue-500 to-purple-600 shadow-xl; }
+    .btn-gradient { @apply bg-gradient-to-r from-blue-500 via-purple-600 to-indigo-600 hover:from-blue-600 hover:via-purple-700 hover:to-indigo-700 px-8 py-4 rounded-2xl font-semibold shadow-2xl hover:shadow-glow transform hover:-translate-y-1 transition-all duration-300; }
+    @keyframes glow { 0% { box-shadow: 0 0 20px rgba(59,130,246,0.5); } 50% { box-shadow: 0 0 30px rgba(147,51,234,0.8); } 100% { box-shadow: 0 0 20px rgba(59,130,246,0.5); } }
   </style>
 </head>
-<body class="dark">
-  <!-- Header nav: Home, Profiles, Departments, Applications, Mod Logs, ER:LC, Activity, Community, Admin, Maps -->
-  <nav class="glass-header">...</nav>
-
-  <!-- Core Homepage -->
-  <section id="home">
-    <div class="hero">
-      <h1>Modern Colorado Roleplay</h1>
-      <div class="status-grid">
-        <div class="status-card online">Server Online</div>
-        <div class="player-count">247 Players</div>
-        <button onclick="joinERLC()">Join Server</button>
-      </div>
-      <div class="announcement">New Update: ER:LC Integration v2.0</div>
-    </div>
-  </section>
-
-  <!-- User Profiles -->
-  <section id="profiles">
-    <div class="profile-card">
-      <form onsubmit="linkRoblox(event)">
-        <input placeholder="Roblox Username" id="robloxLink">
-        <button>Link Roblox</button>
-      </form>
-      <div class="badges">🏅 Badge 1 | 🔥 Active Streak</div>
-    </div>
-  </section>
-
-  <!-- Departments -->
-  <section id="departments">
-    <div class="dept-grid">
-      <div class="dept-card leo">
-        <h3>Law Enforcement</h3>
-        <ul>Chief → Deputy → Officer</ul>
-        <a href="#sop-leo">SOPs</a>
-      </div>
-      <!-- Fire, DOT, Civ -->
-    </div>
-  </section>
-
-  <!-- Applications -->
-  <section id="applications">
-    <div class="form-grid">
-      <form class="app-form">
-        <h3>Staff Application</h3>
-        <!-- Fields: name, roblox, why join, erlc exp -->
-        <button>Submit</button>
-      </form>
-      <div class="status-tracker">
-        <h3>Pending Applications</h3>
-        <table>...</table>
-      </div>
-    </div>
-  </section>
-
-  <!-- Mod Logs -->
-  <section id="mod-logs">
-    <table class="logs-table">
-      <!-- Filtered logs, cases, evidence upload -->
-    </table>
-  </section>
-
-  <!-- ER:LC Integration -->
-  <section id="erlc">
-    <div class="lookup-form">
-      <input placeholder="Player/Vehicle ID">
-      <button onclick="lookupPlayer()">Lookup</button>
-    </div>
-    <div id="bolo-list"></div>
-    <div id="cad-map" style="height:400px;"></div> <!-- Leaflet map -->
-  </section>
-
-  <!-- Activity Leaderboards -->
-  <section id="activity">
-    <canvas id="leaderboardChart"></canvas>
-    <div class="xp-system">
-      <span>Your XP: 1247 / 2500</span>
-    </div>
-  </section>
-
-  <!-- Community -->
-  <section id="community">
-    <div class="polls">
-      <h3>Current Poll</h3>
-      <button>Poll Option 1</button>
-    </div>
-    <div class="event-calendar">...</div>
-  </section>
-
-  <!-- Admin -->
-  <section id="admin">
-    <div class="cms-editor">Drag-drop content</div>
-    <canvas id="analyticsChart"></canvas>
-  </section>
-
-  <!-- Extra -->
-  <section id="extra">
-    <div id="liberty-map"></div> <!-- Interactive map -->
-    <div class="gallery">Screenshots gallery</div>
-  </section>
-
-  <script src="script.js"></script>
+<body>
+  <div id="root"></div>
+  <script>
+    const { createRoot } = ReactDOM;
+    const root = createRoot(document.getElementById('root'));
+    root.render(React.createElement(App));
+  </script>
 </body>
 </html>
-

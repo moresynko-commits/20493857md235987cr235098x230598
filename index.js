@@ -41,9 +41,14 @@ client.once('ready', async () => {
     console.log(`${client.user.tag} logged in!`);
     client.user.setActivity('Modern Colorado | dsc.gg/MDCRX', { type: 'PLAYING' });
     
-    if (process.env.MONGODB_URI) {
-        await mongoose.connect(process.env.MONGODB_URI);
-        console.log('MongoDB connected');
+if (process.env.MONGODB_URI) {
+        mongoose.connect(process.env.MONGODB_URI, {
+            serverSelectionTimeoutMS: 5000,
+            maxPoolSize: 10,
+            socketTimeoutMS: 45000,
+            family: 4,
+            bufferMaxEntries: 0
+        }).then(() => console.log('MongoDB connected')).catch(err => console.error('Mongo error:', err));
     }
     
     const commandsPath = path.join(__dirname, '.');

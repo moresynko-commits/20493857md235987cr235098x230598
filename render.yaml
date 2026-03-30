@@ -9,4 +9,3 @@ services:
       - key: BOT_TOKEN
         sync: false
     autoDeploy: true
-
